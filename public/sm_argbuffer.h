@@ -1,15 +1,14 @@
 /**
- * vim: set ts=4 sw=4 tw=99 noet :
+ * vim: set ts=4 :
  * =============================================================================
- * SourceMod (C)2004-2014 AlliedModders LLC.  All rights reserved.
+ * SourceMod
+ * Copyright (C) 2004-2019 AlliedModders LLC.  All rights reserved.
  * =============================================================================
- *
- * This file is part of the SourceMod/SourcePawn SDK.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3.0, as published by the
  * Free Software Foundation.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
@@ -29,53 +28,50 @@
  *
  * Version: $Id$
  */
+ 
+/**
+ * A type-safe abstraction for creating a contiguous blob of memory used for 
+ * vtable function calls. This blob contains the parameters to be passed into
+ * the function call.
+ */
+template <typename T, typename...Rest>
+class ArgBuffer {
+public:
+	ArgBuffer(const T& t, const Rest&... rest) {
+		unsigned char *ptr = buff;
+		buildbuffer(&ptr, t, rest...);
+	}
 
-static int TestNumber = 0;
-static char TestContext[255];
+	operator void*() { return buff; }
+	operator unsigned char*() { return buff; }
 
-stock void SetTestContext(const char[] context)
-{
-	strcopy(TestContext, sizeof(TestContext), context);
-}
+	constexpr int size() const {
+		return sizeof(buff);
+	}
 
-stock void AssertEq(const char[] text, int cell1, int cell2)
-{
-	TestNumber++;
-	if (cell1 == cell2)
-	{
-		PrintToServer("[%d] %s: %s == %d OK", TestNumber, TestContext, text, cell2);
+private:
+	template <typename K>
+	constexpr static int sizetypes() {
+		return sizeof(K);
 	}
-	else
-	{
-		PrintToServer("[%d] %s FAIL: %s should be %d, got %d", TestNumber, TestContext, text, cell2, cell1);
-		ThrowError("test %d (%s in %s) failed", TestNumber, text, TestContext);
+	template <typename K, typename K2, typename... Kn>
+	constexpr static int sizetypes() {
+		return sizeof(K) + sizetypes<K2, Kn...>();
 	}
-}
 
-stock void AssertFalse(const char[] text, bool value)
-{
-	TestNumber++;
-	if (!value)
-	{
-		PrintToServer("[%d] %s: %s == false OK", TestNumber, TestContext, text, value);
+	template <typename K>
+	void buildbuffer(unsigned char **ptr, K& k) {
+		memcpy(*ptr, &k, sizeof(k));
+		*ptr += sizeof(K);
 	}
-	else
-	{
-		PrintToServer("[%d] %s FAIL: %s should be false, got true", TestNumber, TestContext, text);
-		ThrowError("test %d (%s in %s) failed", TestNumber, text, TestContext);
-	}
-}
 
-stock void AssertTrue(const char[] text, bool value)
-{
-	TestNumber++;
-	if (value)
-	{
-		PrintToServer("[%d] %s: %s == true OK", TestNumber, TestContext, text, value);
+	template <typename K, typename... Kn>
+	void buildbuffer(unsigned char **ptr, K& k, Kn&... kn) {
+		buildbuffer(ptr, k);
+		if (sizeof...(kn)!=0)
+			buildbuffer(ptr, kn...);
 	}
-	else
-	{
-		PrintToServer("[%d] %s FAIL: %s should be true, got false", TestNumber, TestContext, text);
-		ThrowError("test %d (%s in %s) failed", TestNumber, text, TestContext);
-	}
-}
+
+private:
+	unsigned char buff[sizetypes<T, Rest...>()];
+};

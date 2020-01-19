@@ -244,10 +244,10 @@
 		{
 			"GiveNamedItem"
 			{
-				"windows"	"456"
-				"linux"		"457"
-				"linux64"	"457"
-				"mac64"		"457"
+				"windows"	"457"
+				"linux"		"458"
+				"linux64"	"458"
+				"mac64"		"458"
 			}
 			"RemovePlayerItem"
 			{
@@ -286,10 +286,10 @@
 			}
 			"CommitSuicide"
 			{
-				"windows"	"506"
-				"linux"		"506"
-				"linux64"	"506"
-				"mac64"		"506"
+				"windows"	"507"
+				"linux"		"507"
+				"linux64"	"507"
+				"mac64"		"507"
 			}
 			"GetVelocity"
 			{
@@ -335,10 +335,10 @@
 			}
 			"PlayerRunCmd"
 			{
-				"windows"	"476"
-				"linux"		"477"
-				"linux64"	"477"
-				"mac64"		"477"
+				"windows"	"477"
+				"linux"		"478"
+				"linux64"	"478"
+				"mac64"		"478"
 			}
 			"GiveAmmo"
 			{
@@ -346,6 +346,19 @@
 				"linux"		"279"
 				"linux64"	"279"
 				"mac64"		"279"
+			}
+		}
+		"Signatures"
+		{
+			/**
+			 *	CNetworkStringTableContainer::WriteBaselines
+			 *	"Index error writing string table baseline %s\n"
+			 */
+			"WriteBaselines"
+			{
+				"library"	"engine"
+				"windows"	"\x55\x8B\xEC\x83\xEC\x60\x53\x56\x8B\xF1\x8B\x0D\x2A\x2A\x2A\x2A\x57\x89\x75\xF8\x8B\x81\x2A\x2A\x2A\x2A\x89\x45\xF4\x85\xC0"
+				"linux"		"\x55\x89\xE5\x57\x56\x8D\x45\xE7\x53\x83\xEC\x7C\x8B\x7D\x0C\xC7\x44\x24\x2A\x2A\x2A\x2A\x2A\x8B\x75\x08\xC7\x44\x24\x2A\x2A\x2A\x2A\x2A"
 			}
 		}
 	}
